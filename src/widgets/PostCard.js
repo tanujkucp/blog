@@ -93,7 +93,7 @@ export const PostCard = React.memo(function BlogCard(props) {
                     // })}
                     overline={post.created_at}
                     heading={post.title}
-                    body={post.body}
+                    body={post.body.substring(0, 150)}
                 />
                 <Button className={buttonStyles} href={'/post/' + post.id}>Read more</Button>
             </CardContent>
