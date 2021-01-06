@@ -3,24 +3,36 @@ const saltRounds = 8;
 const bcrypt = require('bcrypt');
 const HttpStatus = require('http-status-codes');
 let Configs = require('../config');
+let User = require('../models/User');
 
 
-module.exports = (app) => {
-
+module.exports = (app, db) => {
+    ////////////////////////////////// SIGN UP API //////////////////////////////////////////
     app.post('/signup', (req, res) => {
         var data = req.body;
-
+        console.log(data);
         //now generate a hash of password and store in database
         bcrypt.hash(data.password, saltRounds, (err, hash) => {
             if (!err) {
-                //todo Store hash in your password DB.
-                console.log(hash);
+                //Store hash in your password DB.
+                var template = User.getUserTemplate(data, {password: hash});
+                if (!template) {
+                    res.status(HttpStatus.BAD_REQUEST).send(FAIL.INVALID_INPUTS);
+                    return;
+                }
+                db.collection("users").insertOne(template, function (err, res2) {
+                    if (err) throw err;
+                    console.log("USER: 1 document inserted");
+                    //console.log(res2);
+                    res.status(HttpStatus.OK).send({success: true});
+                });
             } else {
                 res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(FAIL.INTERNAL_ERROR);
             }
         });
     });
 
+    ////////////////////////////////// LOG IN API //////////////////////////////////////////
     app.post('/login', (req, res) => {
         var username = req.body.username;
         var password = req.body.password;
@@ -28,33 +40,40 @@ module.exports = (app) => {
             res.status(HttpStatus.UNAUTHORIZED).send(FAIL.INVALID_INPUTS);
             return;
         }
-        //todo check in database, if found true generate a JWT
-        bcrypt.compare(password, user.password, (err, result) => {
-            if (!err) {
-                if (result) {
-                    // console.log("password matched");
-                    jwt.sign({
-                        username: user.username
-                    }, Configs.JWT_PRIVATE_KEY, {
-                        algorithm: 'RS256',
-                        expiresIn: '15d'
-                    }, (err, token) => {
-                        if (!err) {
-                            //  console.log(token);
-                            res.status(HttpStatus.OK).send({success: true, jwt: token})
-                        } else {
-                            console.log(err);
-                            res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(FAIL.INTERNAL_ERROR);
-                        }
-                    });
-                } else {
-                    //wrong password
-                    res.status(HttpStatus.UNAUTHORIZED).send(FAIL.INVALID_INPUTS);
-                }
+        //check in database, if found true generate a JWT
+        db.collection("users").findOne({username: username}, function (err, result) {
+            if (err || result == null) {
+                res.status(HttpStatus.UNAUTHORIZED).send({success: false, message: 'User not found!'});
             } else {
-                res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(FAIL.INTERNAL_ERROR);
-            }
+                console.log('some result present');
+                console.log(result);
 
+                //match hash of password
+                bcrypt.compare(password, result.password, (err, result) => {
+                    if (!err) {
+                        if (result) {
+                            console.log("password matched");
+                            jwt.sign({username: username}, Configs.JWT_PRIVATE_KEY, {
+                                algorithm: 'RS256',
+                                expiresIn: '15d'
+                            }, (err, token) => {
+                                if (!err) {
+                                    console.log(token);
+                                    res.status(HttpStatus.OK).send({success: true, jwt: token})
+                                } else {
+                                    console.log(err);
+                                    res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(FAIL.INTERNAL_ERROR);
+                                }
+                            });
+                        } else {
+                            //wrong password
+                            res.status(HttpStatus.UNAUTHORIZED).send(FAIL.INVALID_INPUTS);
+                        }
+                    } else {
+                        res.status(HttpStatus.INTERNAL_SERVER_ERROR).send(FAIL.INTERNAL_ERROR);
+                    }
+                });
+            }
         });
     });
 
@@ -62,7 +81,7 @@ module.exports = (app) => {
     app.get('/profile', checkToken, (req, res) => {
         //verify the JWT token generated for the user
         jwt.verify(req.token, Configs.JWT_PUBLIC_KEY, (err, authorizedData) => {
-            if(err){
+            if (err) {
                 //If error send Forbidden (403)
                 console.log('ERROR: Could not connect to the protected route');
                 res.sendStatus(403);
@@ -85,7 +104,7 @@ module.exports = (app) => {
 //Check to make sure header is not undefined, if so, return Forbidden (403)
 let checkToken = (req, res, next) => {
     const header = req.headers['authorization'];
-    if(typeof header !== 'undefined') {
+    if (typeof header !== 'undefined') {
         const bearer = header.split(' ');
         const token = bearer[1];
         req.token = token;

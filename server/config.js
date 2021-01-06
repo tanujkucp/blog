@@ -1,4 +1,4 @@
-const databaseURL = "";
+const databaseURL = "mongodb://localhost:27017/";
 const JWT_PRIVATE_KEY = "-----BEGIN RSA PRIVATE KEY-----\n" +
     "MIIJKAIBAAKCAgEArvPrp2SLIHWGYsht26x680bqTC4NhxRxy3UVifNEt4OZOGB8\n" +
     "A4KS6tM31SGhviK5meY5JsJ4+mTrjx6s128OusJwAn9dKpTOURdW6MwxYbqMeEh0\n" +
@@ -70,5 +70,5 @@ const JWT_PUBLIC_KEY = "-----BEGIN PUBLIC KEY-----\n" +
 module.exports = {
     databaseURL: databaseURL,
     JWT_PRIVATE_KEY: JWT_PRIVATE_KEY,
-    JWT_PUBLIC_KEY: JWT_PUBLIC_KEY
+    JWT_PUBLIC_KEY: JWT_PUBLIC_KEY,
 };

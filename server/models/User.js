@@ -1,14 +1,26 @@
-module.exports = {
-    username: 'user123',
-    password: '1234',
-    firstName: 'Jon',
-    lastName: 'Doe',
-    dob: '12/11/1991',
-    email: 'user@gmail.com',
-    address: {
-        street: '555 Bayshore Blvd',
-        city: 'Tampa',
-        state: 'Florida',
-        zip: '33813'
+let getUserTemplate = function (parameters,extras) {
+    if ((!parameters.username || !parameters.name)) {
+        return null;
     }
+    let template = {};
+    for (let key in parameters) {
+        switch (key) {
+            case 'username':
+            case 'name':
+            case 'email':
+            case 'age':
+                template[key] = (parameters[key]).trim();
+                break;
+        }
+    }
+
+    if (extras !== null && !template.hasOwnProperty('password')) {
+        //the hashed form of password
+        template.password = extras.password;
+    }
+    return template;
+};
+
+module.exports = {
+    getUserTemplate: getUserTemplate,
 };

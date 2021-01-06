@@ -8,7 +8,6 @@ import configs from './config.json';
 import Footer from './widgets/Footer';
 import Header from './widgets/Header';
 import WaveBorder from "./widgets/WaveBorder";
-import back_image from './assets/deadpool.png';
 import LinearProgress from "@material-ui/core/LinearProgress";
 import Snackbar from "@material-ui/core/Snackbar";
 import Paper from "@material-ui/core/Paper";
