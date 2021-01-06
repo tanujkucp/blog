@@ -32,6 +32,7 @@ function Home() {
     const classes = useStyles();
     const [loading, setLoading] = useState(false);
     const [responses, setResponses] = useState([]);
+    const [savedUser, setSavedUser] = useState(null);
 
     //fetch data from server
     const loadData = (timestamp) => {
@@ -49,13 +50,15 @@ function Home() {
     useEffect(() => {
         setLoading(true);
         loadData();
+        const username = localStorage.getItem('username');
+        setSavedUser(username);
     }, []);
 
     return (
         <React.Fragment>
             <CssBaseline/>
 
-            <Header/>
+            <Header user={savedUser}/>
 
             <main style={{backgroundColor: "#cfd8dc"}}>
                 {/* Hero unit */}
@@ -76,7 +79,7 @@ function Home() {
                     {responses ? (<div>
                             <Grid container spacing={4}>
                                 {responses.map((post) => (
-                                   <PostCard post={post} key={post.title}/>
+                                    <PostCard post={post} key={post.title}/>
                                 ))}
                             </Grid>
                         </div>

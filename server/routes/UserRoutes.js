@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt');
 const HttpStatus = require('http-status-codes');
 let Configs = require('../config');
 let User = require('../models/User');
+let Post = require('../models/Post');
 
 
 module.exports = (app, db) => {
@@ -77,8 +78,40 @@ module.exports = (app, db) => {
         });
     });
 
+    ////////////////////////////////// GET PROFILE API //////////////////////////////////////////
     //This is a protected route
-    app.get('/profile', checkToken, (req, res) => {
+    app.post('/profile', checkToken, (req, res) => {
+        //verify the JWT token generated for the user
+        //console.log(req.token);
+        jwt.verify(req.token, Configs.JWT_PUBLIC_KEY, (err, authorizedData) => {
+            if (err) {
+                //If error send Forbidden (403)
+                console.log('ERROR: Could not connect to the protected route');
+                res.sendStatus(403);
+            } else {
+                //If token is successfully verified, we can send the authorized data
+                //fetch profile data from DB
+                console.log(authorizedData);
+                db.collection("users").findOne({username: authorizedData.username}, function (err, result) {
+                    if (err || result == null) {
+                        res.status(HttpStatus.UNAUTHORIZED).send({success: false, message: 'User not found!'});
+                    } else {
+                        delete result['password'];
+                        res.status(HttpStatus.OK).send({success: true, user: result})
+                    }
+                });
+                //todo fetch articles from DB
+
+                console.log('SUCCESS: Connected to protected route');
+            }
+        });
+    });
+
+    ////////////////////////////////// PUBLISH API //////////////////////////////////////////
+    //This is a protected route
+    app.post('/publish', checkToken, (req, res) => {
+        var data = req.body;
+        console.log(data);
         //verify the JWT token generated for the user
         jwt.verify(req.token, Configs.JWT_PUBLIC_KEY, (err, authorizedData) => {
             if (err) {
@@ -87,17 +120,23 @@ module.exports = (app, db) => {
                 res.sendStatus(403);
             } else {
                 //If token is successfully verified, we can send the authorized data
-                //todo fetch profile data from DB
-                //todo fetch articles from DB
-                res.json({
-                    message: 'Successful log in',
-                    authorizedData
+                console.log(authorizedData);
+                //Store post in your DB
+                var template = Post.getPostTemplate(data, {username: authorizedData.username, created_at: Date.now()});
+                if (!template) {
+                    res.status(HttpStatus.BAD_REQUEST).send(FAIL.INVALID_INPUTS);
+                    return;
+                }
+                db.collection("posts").insertOne(template, function (err, res2) {
+                    if (err) throw err;
+                    console.log("POST: 1 document inserted");
+                    //console.log(res2);
+                    res.status(HttpStatus.OK).send({success: true});
                 });
-                console.log('SUCCESS: Connected to protected route');
-            }
-        })
-    });
 
+            }
+        });
+    });
 
 }
 

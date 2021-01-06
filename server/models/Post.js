@@ -1,4 +1,4 @@
-let getPostTemplate = function (parameters) {
+let getPostTemplate = function (parameters, extras) {
     if ((!parameters.title || !parameters.body)) {
         return null;
     }
@@ -15,10 +15,18 @@ let getPostTemplate = function (parameters) {
                 break;
         }
     }
+    if (extras !== null && !template.hasOwnProperty('username')) {
+        //the hashed form of password
+        template.username = extras.username;
+    }
+    if (extras !== null && !template.hasOwnProperty('created_at')) {
+        //the hashed form of password
+        template.created_at = extras.created_at;
+    }
     return template;
 };
 
 
 module.exports = {
-    Post: getPostTemplate
+    getPostTemplate: getPostTemplate
 };

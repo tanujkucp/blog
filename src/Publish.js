@@ -2,7 +2,6 @@ import React, {useEffect, useState} from 'react';
 import axios from 'axios';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import {makeStyles} from '@material-ui/core/styles';
-
 import configs from './config.json';
 import Footer from './widgets/Footer';
 import Header from './widgets/Header';
@@ -15,7 +14,6 @@ import Avatar from "@material-ui/core/Avatar";
 import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
 import TextField from "@material-ui/core/TextField";
-import Divider from "@material-ui/core/Divider";
 import Button from "@material-ui/core/Button";
 import Container from "@material-ui/core/Container";
 import FormControl from "@material-ui/core/FormControl";
@@ -72,6 +70,8 @@ function Publish() {
     const [post, setPost] = useState({title: '', body: '', image: '', tags: []});
     const [error, setError] = useState();
     const [info, setInfo] = useState();
+    const [savedUser, setSavedUser] = useState(null);
+
     const handleChange = (event) => {
         let newPost = {
             ...post,
@@ -112,12 +112,16 @@ function Publish() {
         },
     };
     const tagOptions = ['science', 'lifestyle', 'social', 'economy'];
+    useEffect(() => {
+        const username = localStorage.getItem('username');
+        setSavedUser(username);
+    }, []);
 
     return (
         <React.Fragment>
             <CssBaseline/>
 
-            <Header/>
+            <Header user={savedUser}/>
             {loading ? (<LinearProgress variant="query" color="secondary"/>) : (null)}
             <main style={{backgroundColor: "#cfd8dc"}}>
                 <Snackbar open={error} autoHideDuration={5000} onClose={() => setError(null)}>

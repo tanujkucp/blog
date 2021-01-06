@@ -18,6 +18,7 @@ import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
 import Container from "@material-ui/core/Container";
 import Divider from "@material-ui/core/Divider";
+import {Redirect} from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
     cardGrid: {
@@ -56,6 +57,7 @@ function Signup() {
     const [credentials, setCredentials] = useState({username: '', password: '', email: '', name: '', age: null});
     const [error, setError] = useState();
     const [info, setInfo] = useState();
+    const [redirect, setRedirect] = useState();
 
     const handleChange = (event) => {
         let newCred = {
@@ -72,7 +74,9 @@ function Signup() {
                 if (res.data.success) {
                     //show success message
                     setInfo('New user account created!');
-                    //todo redirect to home page
+                    //redirect to home page
+                    //redirect to home page
+                    setTimeout(()=> setRedirect('/'), 3000);
                 }
                 setLoading(false);
             }).catch((err) => {
@@ -81,6 +85,9 @@ function Signup() {
             if (err.response) setError(err.response.data.message);
         });
     };
+    if (redirect) {
+        return <Redirect to={redirect} />
+    }
 
     return (
         <React.Fragment>

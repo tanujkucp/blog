@@ -12,6 +12,7 @@ import ProfileCard from "./widgets/ProfileCard";
 import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
 import PostCard from "./widgets/PostCard";
+import {Redirect} from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
     cardGrid: {
@@ -27,55 +28,76 @@ const useStyles = makeStyles((theme) => ({
 function Profile(props) {
     const classes = useStyles();
     const [loading, setLoading] = useState(false);
-    const [response, setResponse] = useState([]);
+    const [user, setUser] = useState();
+    const [posts, setPosts]  = useState();
+    const [redirect, setRedirect] = useState();
+    const [savedUser, setSavedUser] = useState(null);
     const {params} = props.match;
 
     //fetch data from server
     const loadData = () => {
-        //todo get JWT from local storage
+        //get JWT from local storage
+        const jwt = localStorage.getItem('jwt');
+        const username = localStorage.getItem('username');
+        if (jwt == null || username !== params.username) {
+            //redirect to home page
+            setTimeout(() => setRedirect('/'), 1000);
+            return;
+        }
+        //console.log(jwt);
 
-        //todo if found, add JWT to request and send to server
-        //todo if not found, redirect to home
-        axios.post(configs.server_address + '/profile', {username: params.username}).then(res => {
+        //add JWT to request and send to server
+        axios.post(configs.server_address + '/profile', {username: params.username}, {
+            headers: {
+                Authorization: `Bearer ${jwt}`
+            }
+        }).then(res => {
             if (res.data.success) {
-                setResponse(res.data.data);
+                setUser(res.data.user);
+                //console.log(res.data.user);
+                setPosts(res.data.posts);
                 setLoading(false);
-            }else {
-                //todo redirect to home
+            } else {
+                alert('An error occurred! Please login again.');
             }
         }).catch(err => {
             console.log(err);
             setLoading(false);
-            //todo redirect to home
         });
     };
 
     useEffect(() => {
         setLoading(true);
         loadData();
+        const username = localStorage.getItem('username');
+        setSavedUser(username);
     }, []);
+
+    if (redirect) {
+        return <Redirect to={redirect}/>
+    }
 
     return (
         <React.Fragment>
             <CssBaseline/>
 
-            <Header/>
+            <Header user={savedUser}/>
 
             <main style={{backgroundColor: "#cfd8dc"}}>
                 {/*Profile Info*/}
                 <Container className={classes.cardGrid} maxWidth="sm">
-                    {/*<ProfileCard profile={response.profile}/>*/}
+                    {user ? (<ProfileCard profile={user}/>): (null)}
                 </Container>
                 {/*Publishes articles*/}
                 <Container className={classes.cardGrid} maxWidth="lg">
-                    {/*{response ? (<div>*/}
-                    {/*        <Grid container spacing={4}>*/}
-                    {/*            {response.posts.map((post) => (*/}
-                    {/*                <PostCard post={post} key={post.title}/>*/}
-                    {/*            ))}*/}
-                    {/*        </Grid>*/}
-                    {/*    </div>*/}
-                    {/*) : (null)}*/}
+                    {posts ? (<div>
+                            <Grid container spacing={4}>
+                                {posts.map((post) => (
+                                    <PostCard post={post} key={post.title}/>
+                                ))}
+                            </Grid>
+                        </div>
+                    ) : (null)}
                 </Container>
 
             </main>

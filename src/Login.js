@@ -3,12 +3,11 @@ import axios from 'axios';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import {makeStyles} from '@material-ui/core/styles';
 import MuiAlert from '@material-ui/lab/Alert';
-
+import { Redirect } from "react-router-dom";
 import configs from './config.json';
 import Footer from './widgets/Footer';
 import Header from './widgets/Header';
 import WaveBorder from "./widgets/WaveBorder";
-import back_image from './assets/deadpool.png';
 import LinearProgress from "@material-ui/core/LinearProgress";
 import Snackbar from "@material-ui/core/Snackbar";
 import Paper from "@material-ui/core/Paper";
@@ -55,6 +54,8 @@ function Login() {
     const [credentials, setCredentials] = useState({username: '', password: ''});
     const [error, setError] = useState();
     const [info, setInfo] = useState();
+    const [redirect, setRedirect] = useState();
+    const [savedUser, setSavedUser] = useState(null);
 
     const handleChange = (event) => {
         let newCred = {
@@ -71,8 +72,11 @@ function Login() {
                 if (res.data.success) {
                     //show success message
                     setInfo('You have logged in successfully!');
-                    //todo redirect to home page
-                    //todo save jwt token in local storage
+                    //save jwt token in local storage
+                    localStorage.setItem('jwt', res.data.jwt);
+                    localStorage.setItem('username', credentials.username);
+                    //redirect to home page
+                    setTimeout(()=> setRedirect('/'), 3000);
                 }
                 setLoading(false);
             }).catch((err) => {
@@ -82,11 +86,20 @@ function Login() {
         });
     };
 
+    useEffect(() => {
+        const username = localStorage.getItem('username');
+        setSavedUser(username);
+    }, []);
+
+    if (redirect) {
+        return <Redirect to={redirect} />
+    }
+
     return (
         <React.Fragment>
             <CssBaseline/>
 
-            <Header/>
+            <Header user={savedUser}/>
             {loading ? (<LinearProgress variant="query" color="secondary"/>) : (null)}
             <main style={{backgroundColor: "#cfd8dc"}}>
                 <Snackbar open={error} autoHideDuration={5000} onClose={() => setError(null)}>

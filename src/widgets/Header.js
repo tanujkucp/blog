@@ -19,9 +19,11 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export default function Header() {
+export default function Header(props) {
     const classes = useStyles();
-    //todo use params to add profile links
+    let user = props.user;
+    //const {params} = props.match;
+    //use params to add profile links
     return (
         <AppBar position="relative" style={{backgroundColor: 'rgb(36, 40, 44)'}}>
             <Toolbar style={{flexDirection: 'row', justifyContent: 'space-between'}}>
@@ -38,10 +40,12 @@ export default function Header() {
                         <Link variant="button" color="textPrimary" href="/login" className={classes.link}>
                             Log In
                         </Link>
-                        <Link variant="button" color="textPrimary" href="/user/username" className={classes.link}>
+                        <Link variant="button" color="textPrimary"
+                              href={user == null ? '/' : '/user/' + user}
+                              className={classes.link}>
                             Profile
                         </Link>
-                        <Link variant="button" color="textPrimary" href="/publish" className={classes.link}>
+                        <Link variant="button" color="textPrimary" href={user == null ? '/' : '/publish'} className={classes.link}>
                             Publish
                         </Link>
                     </nav>
