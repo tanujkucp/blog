@@ -25,6 +25,7 @@ import LocalOfferIcon from '@material-ui/icons/LocalOffer';
 import MenuItem from "@material-ui/core/MenuItem";
 import PostAddIcon from '@material-ui/icons/PostAdd';
 import PostCard from "./widgets/PostCard";
+import {Redirect} from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
     cardGrid: {
@@ -71,6 +72,8 @@ function Publish() {
     const [error, setError] = useState();
     const [info, setInfo] = useState();
     const [savedUser, setSavedUser] = useState(null);
+    const [redirect, setRedirect] = useState();
+    const [jwt, setJWT]= useState();
 
     const handleChange = (event) => {
         let newPost = {
@@ -83,15 +86,17 @@ function Publish() {
     //store data to server
     const savePost = () => {
         setLoading(true);
-        //todo get JWT from local storage
-
-        //todo if found, add JWT to request and send to server
-        //todo if not found, redirect to home
-        axios.post(configs.server_address + "/publish", post)
-            .then((res) => {
+        //add JWT to request and send to server
+        axios.post(configs.server_address + "/publish", post, {
+            headers: {
+                Authorization: `Bearer ${jwt}`
+            }
+        }).then((res) => {
                 if (res.data.success) {
                     //show success message
                     setInfo('New blog post created!');
+                    //redirect to home page
+                    setTimeout(()=> setRedirect('/'), 3000);
                 }
                 setLoading(false);
             }).catch((err) => {
@@ -115,7 +120,17 @@ function Publish() {
     useEffect(() => {
         const username = localStorage.getItem('username');
         setSavedUser(username);
+        //get JWT from local storage
+        const jwt = localStorage.getItem('jwt');
+        if (jwt == null) {
+            //redirect to home page
+            setTimeout(() => setRedirect('/'), 1000);
+        }else setJWT(jwt);
     }, []);
+
+    if (redirect) {
+        return <Redirect to={redirect}/>
+    }
 
     return (
         <React.Fragment>
@@ -137,13 +152,17 @@ function Publish() {
 
                 <Container className={classes.cardGrid} maxWidth="sm">
                     {/*Preview of post*/}
-                    <PostCard post={post} key={post.title}/>
+                    <Typography component="h1" variant="h5">
+                        Preview
+                    </Typography>
+                    <PostCard post={{...post, created_at: Date.now()}} key={post.title}/>
+
                     <Paper className={classes.paper}>
                         <Avatar className={classes.avatar}>
                             <PostAddIcon/>
                         </Avatar>
                         <Typography component="h1" variant="h5">
-                            Create a Blog post
+                            Create a Blog Post
                         </Typography>
                         <form className={classes.form} noValidate>
                             <Grid container spacing={3}>

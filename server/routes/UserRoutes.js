@@ -16,7 +16,7 @@ module.exports = (app, db) => {
         bcrypt.hash(data.password, saltRounds, (err, hash) => {
             if (!err) {
                 //Store hash in your password DB.
-                var template = User.getUserTemplate(data, {password: hash});
+                var template = User.getUserTemplate(data, {password: hash,  created_at: Date.now()});
                 if (!template) {
                     res.status(HttpStatus.BAD_REQUEST).send(FAIL.INVALID_INPUTS);
                     return;

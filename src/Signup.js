@@ -75,7 +75,6 @@ function Signup() {
                     //show success message
                     setInfo('New user account created!');
                     //redirect to home page
-                    //redirect to home page
                     setTimeout(()=> setRedirect('/'), 3000);
                 }
                 setLoading(false);

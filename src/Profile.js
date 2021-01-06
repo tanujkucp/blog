@@ -47,7 +47,7 @@ function Profile(props) {
         //console.log(jwt);
 
         //add JWT to request and send to server
-        axios.post(configs.server_address + '/profile', {username: params.username}, {
+        axios.post(configs.server_address + '/profile',{}, {
             headers: {
                 Authorization: `Bearer ${jwt}`
             }

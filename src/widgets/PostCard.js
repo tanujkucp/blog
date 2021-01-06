@@ -85,15 +85,15 @@ export const PostCard = React.memo(function BlogCard(props) {
             <CardContent>
                 <TextInfoContent
                     classes={contentStyles}
-                    // overline={new Date(post.created_at._seconds * 1000).toLocaleDateString(undefined, {
-                    //     weekday: 'long',
-                    //     year: 'numeric',
-                    //     month: 'long',
-                    //     day: 'numeric'
-                    // })}
-                    overline={post.created_at}
+                    overline={new Date(post.created_at).toLocaleDateString(undefined, {
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric'
+                    })}
+                    //overline={post.created_at}
                     heading={post.title}
-                    body={post.body.substring(0, 150)}
+                    body={post.body.substring(0, 120) + '...'}
                 />
                 <Button className={buttonStyles} href={'/post/' + post.id}>Read more</Button>
             </CardContent>
