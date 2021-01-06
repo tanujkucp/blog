@@ -13,6 +13,10 @@ import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
 import PostCard from "./widgets/PostCard";
 import {Redirect} from "react-router-dom";
+import Paper from "@material-ui/core/Paper";
+import LockOpenIcon from '@material-ui/icons/LockOpen';
+import Login from "./Login";
+import Button from "@material-ui/core/Button";
 
 const useStyles = makeStyles((theme) => ({
     cardGrid: {
@@ -22,14 +26,22 @@ const useStyles = makeStyles((theme) => ({
     },
     waveBorder: {
         paddingTop: theme.spacing(4),
-    }
+    },
+    online: {
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginTop: 10,
+        padding: 5
+    },
 }));
 
 function Profile(props) {
     const classes = useStyles();
     const [loading, setLoading] = useState(false);
     const [user, setUser] = useState();
-    const [posts, setPosts]  = useState();
+    const [posts, setPosts] = useState();
     const [redirect, setRedirect] = useState();
     const [savedUser, setSavedUser] = useState(null);
     const {params} = props.match;
@@ -47,7 +59,7 @@ function Profile(props) {
         //console.log(jwt);
 
         //add JWT to request and send to server
-        axios.post(configs.server_address + '/profile',{}, {
+        axios.post(configs.server_address + '/profile', {}, {
             headers: {
                 Authorization: `Bearer ${jwt}`
             }
@@ -64,6 +76,13 @@ function Profile(props) {
             console.log(err);
             setLoading(false);
         });
+    };
+
+    const logout = () => {
+        //delete credentials from local storage
+        localStorage.clear()
+        //redirect to home
+        setTimeout(() => setRedirect('/'), 1000);
     };
 
     useEffect(() => {
@@ -86,7 +105,20 @@ function Profile(props) {
             <main style={{backgroundColor: "#cfd8dc"}}>
                 {/*Profile Info*/}
                 <Container className={classes.cardGrid} maxWidth="sm">
-                    {user ? (<ProfileCard profile={user}/>): (null)}
+                    {user ? (
+                        <div>
+                            <ProfileCard profile={user}/>
+                            <Paper className={classes.online}>
+                                <LockOpenIcon style={{color: '#0f0'}}/>
+                                <Typography component="h1" variant="h6">
+                                    Currently Logged In
+                                </Typography>
+                                <Button onClick={logout} style={{marginLeft: 30}} variant={'contained'}
+                                        color={'secondary'}>
+                                    Log Out
+                                </Button>
+                            </Paper>
+                        </div>) : (null)}
                 </Container>
                 {/*Publishes articles*/}
                 <Container className={classes.cardGrid} maxWidth="lg">
