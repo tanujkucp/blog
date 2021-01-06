@@ -35,7 +35,7 @@ function Home() {
 
     //fetch data from server
     const loadData = (timestamp) => {
-        axios.post(configs.server_address + '/getAd', {page: 'home'}).then(res => {
+        axios.post(configs.server_address + '/latest').then(res => {
             if (res.data.success) {
                 setResponses(res.data.data);
                 setLoading(false);
@@ -44,7 +44,6 @@ function Home() {
             setLoading(false);
             console.log(err);
         });
-
     };
 
     useEffect(() => {

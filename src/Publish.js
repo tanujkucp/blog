@@ -111,7 +111,7 @@ function Publish() {
             },
         },
     };
-    const tagOptions = ['Science', 'Lifestyle', 'Social', 'Economy'];
+    const tagOptions = ['science', 'lifestyle', 'social', 'economy'];
 
     return (
         <React.Fragment>
