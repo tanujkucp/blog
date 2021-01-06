@@ -1,4 +1,4 @@
-#Short Project for CoFoundersTown 2021
+# Short Project for CoFoundersTown 2021
 **This project is a web app made using React and Node.js.**
 
 ## UI Features
@@ -19,13 +19,13 @@ Screenshots can be found here on [GitHub](https://github.com/tanujkucp/blog/tree
 4. Sensitive API only accessible over https with JWT token only.
 5. Loosely coupled APIs
 
-##Frameworks and Libraries
+## Frameworks and Libraries
 1. React.js
 2. Express.js
 3. MongoDB
 4. Node.js
 
-###Starting debug and using web app
+### Starting debug and using web app
 ```shell script
 1. npm start    # starting development server for frontend
 2. npm build    # create production build of website
@@ -33,7 +33,7 @@ Screenshots can be found here on [GitHub](https://github.com/tanujkucp/blog/tree
 4. npm server   # starting development server of Node.js Backend
 ```
 
-##Hosting
+## Hosting
 The project is not currently hosted.
 
 Checkout my similar and bigger project hosted [here](https://filmistaan.web.app/) and its admin console [here](https://filmistaan-admin.web.app/).
