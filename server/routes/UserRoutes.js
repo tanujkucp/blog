@@ -16,7 +16,7 @@ module.exports = (app, db) => {
         bcrypt.hash(data.password, saltRounds, (err, hash) => {
             if (!err) {
                 //Store hash in your password DB.
-                var template = User.getUserTemplate(data, {password: hash,  created_at: Date.now()});
+                var template = User.getUserTemplate(data, {password: hash, created_at: Date.now()});
                 if (!template) {
                     res.status(HttpStatus.BAD_REQUEST).send(FAIL.INVALID_INPUTS);
                     return;
@@ -96,12 +96,17 @@ module.exports = (app, db) => {
                     if (err || result == null) {
                         res.status(HttpStatus.UNAUTHORIZED).send({success: false, message: 'User not found!'});
                     } else {
-                        delete result['password'];
-                        res.status(HttpStatus.OK).send({success: true, user: result})
+                        db.collection("posts").find({username: authorizedData.username}).limit(10).toArray(function (err2, result2) {
+                            if (err2 || result2 == null) {
+                                res.status(HttpStatus.OK).send({success: true, user: result});
+                            } else {
+                                console.log(result2);
+                                delete result['password'];
+                                res.status(HttpStatus.OK).send({success: true, user: result, posts: result2});
+                            }
+                        });
                     }
                 });
-                //todo fetch articles from DB
-
                 console.log('SUCCESS: Connected to protected route');
             }
         });

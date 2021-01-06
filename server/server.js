@@ -21,6 +21,8 @@ db_client.connect((err, db) => {
     var dbo = db.db("blog");
     // Import Routes directory
     require('./routes/UserRoutes')(app, dbo);
+    require('./routes/PostRoutes')(app, dbo);
+
 });
 //const db = db_client.db("blog");
 

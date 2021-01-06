@@ -44,18 +44,18 @@ function TagPage(props) {
     const [loading, setLoading] = useState(false);
     const [responses, setResponses] = useState([]);
     const {params} = props.match;
+
     //fetch data from server
-    const loadData = (timestamp) => {
-        axios.post(configs.server_address + '/latest', {tag: params.tagname}).then(res => {
+    const loadData = () => {
+        axios.post(configs.server_address + '/latest', {tags: ''}).then(res => {
             if (res.data.success) {
-                setResponses(res.data.data);
+                setResponses(res.data.posts);
                 setLoading(false);
             }
         }).catch(err => {
             setLoading(false);
             console.log(err);
         });
-
     };
 
     useEffect(() => {

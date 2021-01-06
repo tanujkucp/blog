@@ -95,7 +95,7 @@ export const PostCard = React.memo(function BlogCard(props) {
                     heading={post.title}
                     body={post.body.substring(0, 120) + '...'}
                 />
-                <Button className={buttonStyles} href={'/post/' + post.id}>Read more</Button>
+                <Button className={buttonStyles} href={'/post/' + post._id}>Read more</Button>
             </CardContent>
         </Card>
     );

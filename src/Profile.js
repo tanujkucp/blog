@@ -20,7 +20,7 @@ import Button from "@material-ui/core/Button";
 
 const useStyles = makeStyles((theme) => ({
     cardGrid: {
-        paddingTop: theme.spacing(5),
+        paddingTop: theme.spacing(0),
         paddingBottom: theme.spacing(5),
         justifyContent: 'center'
     },
@@ -107,7 +107,7 @@ function Profile(props) {
                 <Container className={classes.cardGrid} maxWidth="sm">
                     {user ? (
                         <div>
-                            <ProfileCard profile={user}/>
+                            <div style={{paddingTop: 10}}><ProfileCard profile={user}/></div>
                             <Paper className={classes.online}>
                                 <LockOpenIcon style={{color: '#0f0'}}/>
                                 <Typography component="h1" variant="h6">

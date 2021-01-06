@@ -38,7 +38,7 @@ function Home() {
     const loadData = (timestamp) => {
         axios.post(configs.server_address + '/latest').then(res => {
             if (res.data.success) {
-                setResponses(res.data.data);
+                setResponses(res.data.posts);
                 setLoading(false);
             }
         }).catch(err => {
