@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-function Blog() {
+function BlogPost() {
     const classes = useStyles();
     const [loading, setLoading] = useState(false);
     const [responses, setResponses] = useState([]);
@@ -80,4 +80,4 @@ function Blog() {
     );
 }
 
-export default Blog;
+export default BlogPost;

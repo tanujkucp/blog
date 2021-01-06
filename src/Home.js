@@ -12,7 +12,7 @@ import Footer from './widgets/Footer';
 import Header from './widgets/Header';
 import WaveBorder from "./widgets/WaveBorder";
 import back_image from './assets/deadpool.png';
-import BlogCard from "./widgets/BlogCard";
+import PostCard from "./widgets/PostCard";
 
 const useStyles = makeStyles((theme) => ({
     heroContent: {
@@ -36,10 +36,12 @@ function Home() {
     //fetch data from server
     const loadData = (timestamp) => {
         axios.post(configs.server_address + '/getAd', {page: 'home'}).then(res => {
-            if (res.data.success && res.data.data.enabled) {
+            if (res.data.success) {
                 setResponses(res.data.data);
+                setLoading(false);
             }
         }).catch(err => {
+            setLoading(false);
             console.log(err);
         });
 
@@ -74,8 +76,8 @@ function Home() {
                 <Container className={classes.cardGrid} maxWidth="lg">
                     {responses ? (<div>
                             <Grid container spacing={4}>
-                                {responses.map((blog) => (
-                                   <BlogCard blog={blog} key={blog.title}/>
+                                {responses.map((post) => (
+                                   <PostCard post={post} key={post.title}/>
                                 ))}
                             </Grid>
                         </div>

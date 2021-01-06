@@ -68,37 +68,37 @@ const useStyles = makeStyles(({breakpoints, spacing}) => ({
 }));
 //'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Git_icon.svg/2000px-Git_icon.svg.png'
 
-export const BlogCard = React.memo(function BlogCard(props) {
+export const PostCard = React.memo(function BlogCard(props) {
     const styles = useStyles();
     const {
         button: buttonStyles,
         ...contentStyles
     } = useBlogTextInfoContentStyles();
     const shadowStyles = useOverShadowStyles();
-    let blog = props.blog;
+    let post = props.post;
     return (
         <Card className={cx(styles.root, shadowStyles.root)}>
             <CardMedia
                 className={styles.media}
-                image={blog.image}
+                image={post.image}
             />
             <CardContent>
                 <TextInfoContent
                     classes={contentStyles}
-                    // overline={new Date(blog.created_at._seconds * 1000).toLocaleDateString(undefined, {
+                    // overline={new Date(post.created_at._seconds * 1000).toLocaleDateString(undefined, {
                     //     weekday: 'long',
                     //     year: 'numeric',
                     //     month: 'long',
                     //     day: 'numeric'
                     // })}
-                    overline={blog.created_at}
-                    heading={blog.title}
-                    body={blog.body}
+                    overline={post.created_at}
+                    heading={post.title}
+                    body={post.body}
                 />
-                <Button className={buttonStyles} href={'/blog/' + blog.id}>Read more</Button>
+                <Button className={buttonStyles} href={'/post/' + post.id}>Read more</Button>
             </CardContent>
         </Card>
     );
 });
 
-export default BlogCard;
+export default PostCard;

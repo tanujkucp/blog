@@ -7,21 +7,16 @@ import configs from './config.json';
 import Footer from './widgets/Footer';
 import Header from './widgets/Header';
 import WaveBorder from "./widgets/WaveBorder";
-import back_image from './assets/deadpool.png';
+import Typography from "@material-ui/core/Typography";
+import ProfileCard from "./widgets/ProfileCard";
+import Container from "@material-ui/core/Container";
+import Grid from "@material-ui/core/Grid";
+import PostCard from "./widgets/PostCard";
 
 const useStyles = makeStyles((theme) => ({
-    heroContent: {
-        backgroundColor: theme.palette.background.paper,
-        padding: theme.spacing(8, 0, 6),
-        paddingTop: 10,
-        backgroundImage: `url(${back_image})`
-    },
-    heroButtons: {
-        marginTop: theme.spacing(4),
-    },
     cardGrid: {
-        paddingTop: theme.spacing(8),
-        paddingBottom: theme.spacing(8),
+        paddingTop: theme.spacing(5),
+        paddingBottom: theme.spacing(5),
         justifyContent: 'center'
     },
     waveBorder: {
@@ -29,21 +24,30 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-function Profile() {
+function Profile(props) {
     const classes = useStyles();
     const [loading, setLoading] = useState(false);
-    const [responses, setResponses] = useState([]);
+    const [response, setResponse] = useState([]);
+    const {params} = props.match;
 
     //fetch data from server
-    const loadData = (timestamp) => {
-        axios.post(configs.server_address + '/getAd', {page: 'home'}).then(res => {
-            if (res.data.success && res.data.data.enabled) {
-                setResponses(res.data.data);
+    const loadData = () => {
+        //todo get JWT from local storage
+
+        //todo if found, add JWT to request and send to server
+        //todo if not found, redirect to home
+        axios.post(configs.server_address + '/profile', {username: params.username}).then(res => {
+            if (res.data.success) {
+                setResponse(res.data.data);
+                setLoading(false);
+            }else {
+                //todo redirect to home
             }
         }).catch(err => {
             console.log(err);
+            setLoading(false);
+            //todo redirect to home
         });
-
     };
 
     useEffect(() => {
@@ -56,14 +60,23 @@ function Profile() {
             <CssBaseline/>
 
             <Header/>
-            <WaveBorder
-                upperColor={'rgb(36, 40, 44)'}
-                lowerColor="#FFFFFF"
-                className={classes.waveBorder}
-                animationNegativeDelay={2}
-            />
+
             <main style={{backgroundColor: "#cfd8dc"}}>
-                {/* Hero unit */}
+                {/*Profile Info*/}
+                <Container className={classes.cardGrid} maxWidth="sm">
+                    {/*<ProfileCard profile={response.profile}/>*/}
+                </Container>
+                {/*Publishes articles*/}
+                <Container className={classes.cardGrid} maxWidth="lg">
+                    {/*{response ? (<div>*/}
+                    {/*        <Grid container spacing={4}>*/}
+                    {/*            {response.posts.map((post) => (*/}
+                    {/*                <PostCard post={post} key={post.title}/>*/}
+                    {/*            ))}*/}
+                    {/*        </Grid>*/}
+                    {/*    </div>*/}
+                    {/*) : (null)}*/}
+                </Container>
 
             </main>
 

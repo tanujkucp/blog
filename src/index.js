@@ -9,7 +9,7 @@ const Login = React.lazy(() => import('./Login'));
 const Signup = React.lazy(() => import('./Signup'));
 const Profile = React.lazy(() => import('./Profile'));
 const Publish = React.lazy(() => import('./Publish'));
-const Blog = React.lazy(() => import('./Blog'));
+const BlogPost = React.lazy(() => import('./BlogPost'));
 const TagPage = React.lazy(() => import('./TagPage'));
 
 
@@ -23,7 +23,7 @@ const routing = (
                 <Route exact path="/signup" component={Signup}/>
                 <Route exact path="/user/:username" component={Profile}/>
                 <Route exact path="/publish" component={Publish}/>
-                <Route exact path="/blog/:id" component={Blog}/>
+                <Route exact path="/post/:id" component={BlogPost}/>
                 <Route exact path="/tags/:tagname" component={TagPage}/>
                 <Route component={Home}/>
             </Switch>
