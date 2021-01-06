@@ -1,18 +1,38 @@
 const jwt = require('jsonwebtoken');
 const HttpStatus = require('http-status-codes');
 let Configs = require('../config');
+var ObjectId = require('mongodb').ObjectId;
 
 
 module.exports = (app, db) => {
 ////////////////////////////////// GET LATEST API //////////////////////////////////////////
     app.post('/latest', (req, res) => {
-        let tags = req.body.tags;
-        db.collection("posts").find({}).limit(10).toArray(function (err, result) {
+        let tag = req.body.tag;
+        let filters = {};
+        if (tag) {
+            filters = {tags: tag}
+        }
+        db.collection("posts").find(filters).limit(20).sort({created_at: -1}).toArray(function (err, result) {
             if (err || result == null) {
                 res.status(HttpStatus.UNAUTHORIZED).send({success: false, message: 'Posts not found!'});
             } else {
                 console.log(result);
                 res.status(HttpStatus.OK).send({success: true, posts: result})
+            }
+        });
+    });
+
+    app.post('/post', (req, res) => {
+        let id = req.body.id;
+        //console.log(id);
+        db.collection("posts").findOne({"_id": ObjectId(id)}, function (err, result) {
+            //console.log(err);
+            //console.log(result);
+            if (err || result == null) {
+                res.status(HttpStatus.UNAUTHORIZED).send({success: false, message: 'Posts not found!'});
+            } else {
+                console.log(result);
+                res.status(HttpStatus.OK).send({success: true, post: result})
             }
         });
     });

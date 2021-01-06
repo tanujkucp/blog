@@ -8,17 +8,12 @@ import Footer from './widgets/Footer';
 import Header from './widgets/Header';
 import WaveBorder from "./widgets/WaveBorder";
 import back_image from './assets/deadpool.png';
+import LinearProgress from "@material-ui/core/LinearProgress";
+import Typography from "@material-ui/core/Typography";
+import BlogPost from "./widgets/BlogPost";
+import Container from "@material-ui/core/Container";
 
 const useStyles = makeStyles((theme) => ({
-    heroContent: {
-        backgroundColor: theme.palette.background.paper,
-        padding: theme.spacing(8, 0, 6),
-        paddingTop: 10,
-        backgroundImage: `url(${back_image})`
-    },
-    heroButtons: {
-        marginTop: theme.spacing(4),
-    },
     cardGrid: {
         paddingTop: theme.spacing(8),
         paddingBottom: theme.spacing(8),
@@ -29,19 +24,22 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-function BlogPost() {
+function BlogPostPage(props) {
     const classes = useStyles();
     const [loading, setLoading] = useState(false);
-    const [responses, setResponses] = useState([]);
+    const [post, setPost] = useState();
+    const {params} = props.match;
 
     //fetch data from server
-    const loadData = (timestamp) => {
-        axios.post(configs.server_address + '/getAd', {page: 'home'}).then(res => {
-            if (res.data.success && res.data.data.enabled) {
-                setResponses(res.data.data);
+    const loadData = () => {
+        axios.post(configs.server_address + '/post', {id: params.id}).then(res => {
+            if (res.data.success) {
+                setPost(res.data.post);
             }
+            setLoading(false);
         }).catch(err => {
             console.log(err);
+            setLoading(false);
         });
 
     };
@@ -56,14 +54,18 @@ function BlogPost() {
             <CssBaseline/>
 
             <Header/>
-            <WaveBorder
-                upperColor={'rgb(36, 40, 44)'}
-                lowerColor="#FFFFFF"
-                className={classes.waveBorder}
-                animationNegativeDelay={2}
-            />
+            {loading ? (<LinearProgress variant="query" color="secondary"/>) : (null)}
             <main style={{backgroundColor: "#cfd8dc"}}>
-                {/* Hero unit */}
+                {post ? (
+                    <Container className={classes.cardGrid} maxWidth="sm">
+                    <BlogPost post ={post}/>
+                    </Container>
+                ) : (null)}
+                {!loading && post == null ? (
+                    <Typography variant="h5" align="center" color="textSecondary" paragraph>
+                        No blog post found for this this ID.
+                    </Typography>
+                ) : (null)}
 
             </main>
 
@@ -80,4 +82,4 @@ function BlogPost() {
     );
 }
 
-export default BlogPost;
+export default BlogPostPage;

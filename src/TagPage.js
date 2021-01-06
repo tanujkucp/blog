@@ -42,12 +42,12 @@ const useStyles = makeStyles((theme) => ({
 function TagPage(props) {
     const classes = useStyles();
     const [loading, setLoading] = useState(false);
-    const [responses, setResponses] = useState([]);
+    const [responses, setResponses] = useState();
     const {params} = props.match;
 
     //fetch data from server
     const loadData = () => {
-        axios.post(configs.server_address + '/latest', {tags: ''}).then(res => {
+        axios.post(configs.server_address + '/latest', {tag: params.tagname}).then(res => {
             if (res.data.success) {
                 setResponses(res.data.posts);
                 setLoading(false);
@@ -100,6 +100,11 @@ function TagPage(props) {
                             </Grid>
                         </div>
                     ) : (null)}
+                    {responses && responses.length <1 ? (
+                        <Typography variant="h5" align="center" color="textSecondary" paragraph>
+                            No blog posts found for this tag.
+                        </Typography>
+                    ):(null)}
                 </Container>
 
             </main>

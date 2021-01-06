@@ -96,7 +96,7 @@ module.exports = (app, db) => {
                     if (err || result == null) {
                         res.status(HttpStatus.UNAUTHORIZED).send({success: false, message: 'User not found!'});
                     } else {
-                        db.collection("posts").find({username: authorizedData.username}).limit(10).toArray(function (err2, result2) {
+                        db.collection("posts").find({username: authorizedData.username}).limit(20).sort({created_at : -1}).toArray(function (err2, result2) {
                             if (err2 || result2 == null) {
                                 res.status(HttpStatus.OK).send({success: true, user: result});
                             } else {

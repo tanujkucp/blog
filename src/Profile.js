@@ -17,6 +17,7 @@ import Paper from "@material-ui/core/Paper";
 import LockOpenIcon from '@material-ui/icons/LockOpen';
 import Login from "./Login";
 import Button from "@material-ui/core/Button";
+import LinearProgress from "@material-ui/core/LinearProgress";
 
 const useStyles = makeStyles((theme) => ({
     cardGrid: {
@@ -101,7 +102,7 @@ function Profile(props) {
             <CssBaseline/>
 
             <Header user={savedUser}/>
-
+            {loading ? (<LinearProgress variant="query" color="secondary"/>) : (null)}
             <main style={{backgroundColor: "#cfd8dc"}}>
                 {/*Profile Info*/}
                 <Container className={classes.cardGrid} maxWidth="sm">

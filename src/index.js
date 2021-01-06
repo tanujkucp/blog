@@ -9,7 +9,7 @@ const Login = React.lazy(() => import('./Login'));
 const Signup = React.lazy(() => import('./Signup'));
 const Profile = React.lazy(() => import('./Profile'));
 const Publish = React.lazy(() => import('./Publish'));
-const BlogPost = React.lazy(() => import('./BlogPost'));
+const BlogPost = React.lazy(() => import('./BlogPostPage'));
 const TagPage = React.lazy(() => import('./TagPage'));
 
 
