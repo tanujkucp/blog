@@ -2,69 +2,150 @@ import React, {useEffect, useState} from 'react';
 import axios from 'axios';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import {makeStyles} from '@material-ui/core/styles';
+import MuiAlert from '@material-ui/lab/Alert';
 
 import configs from './config.json';
 import Footer from './widgets/Footer';
 import Header from './widgets/Header';
 import WaveBorder from "./widgets/WaveBorder";
 import back_image from './assets/deadpool.png';
+import LinearProgress from "@material-ui/core/LinearProgress";
+import Snackbar from "@material-ui/core/Snackbar";
+import Paper from "@material-ui/core/Paper";
+import Avatar from "@material-ui/core/Avatar";
+import Typography from "@material-ui/core/Typography";
+import TextField from "@material-ui/core/TextField";
+import Button from "@material-ui/core/Button";
+import Container from "@material-ui/core/Container";
 
 const useStyles = makeStyles((theme) => ({
-    heroContent: {
-        backgroundColor: theme.palette.background.paper,
-        padding: theme.spacing(8, 0, 6),
-        paddingTop: 10,
-        backgroundImage: `url(${back_image})`
-    },
-    heroButtons: {
-        marginTop: theme.spacing(4),
-    },
     cardGrid: {
-        paddingTop: theme.spacing(8),
-        paddingBottom: theme.spacing(8),
+        paddingTop: theme.spacing(10),
+        paddingBottom: theme.spacing(10),
         justifyContent: 'center'
     },
     waveBorder: {
         paddingTop: theme.spacing(4),
-    }
+    },
+    paper: {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifySelf: 'center',
+    },
+    avatar: {
+        margin: theme.spacing(1),
+        backgroundColor: theme.palette.secondary.main,
+    },
+    form: {
+        width: '90%', // Fix IE 11 issue.
+    },
+    submit: {
+        margin: theme.spacing(3, 0, 2),
+    },
 }));
+
+function Alert(props) {
+    return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 function Login() {
     const classes = useStyles();
     const [loading, setLoading] = useState(false);
-    const [responses, setResponses] = useState([]);
+    const [credentials, setCredentials] = useState({username: '', password: ''});
+    const [error, setError] = useState();
+    const [info, setInfo] = useState();
 
-    //fetch data from server
-    const loadData = (timestamp) => {
-        axios.post(configs.server_address + '/getAd', {page: 'home'}).then(res => {
-            if (res.data.success && res.data.data.enabled) {
-                setResponses(res.data.data);
-            }
-        }).catch(err => {
-            console.log(err);
-        });
-
+    const handleChange = (event) => {
+        let newCred = {
+            ...credentials,
+            [event.target.name]: event.target.value
+        };
+        setCredentials(newCred);
     };
-
-    useEffect(() => {
+    //store data to server
+    const login = () => {
         setLoading(true);
-        loadData();
-    }, []);
+        axios.post(configs.server_address + "/login", credentials)
+            .then((res) => {
+                if (res.data.success) {
+                    //show success message
+                    setInfo('You have logged in successfully!');
+                    //todo redirect to home page
+                    //todo save jwt token in local storage
+                }
+                setLoading(false);
+            }).catch((err) => {
+            setLoading(false);
+            console.log(err);
+            if (err.response) setError(err.response.data.message);
+        });
+    };
 
     return (
         <React.Fragment>
             <CssBaseline/>
 
             <Header/>
-            <WaveBorder
-                upperColor={'rgb(36, 40, 44)'}
-                lowerColor="#FFFFFF"
-                className={classes.waveBorder}
-                animationNegativeDelay={2}
-            />
+            {loading ? (<LinearProgress variant="query" color="secondary"/>) : (null)}
             <main style={{backgroundColor: "#cfd8dc"}}>
-                {/* Hero unit */}
+                <Snackbar open={error} autoHideDuration={5000} onClose={() => setError(null)}>
+                    <Alert severity="error" onClose={() => setError(null)}>
+                        {error}
+                    </Alert>
+                </Snackbar>
+                <Snackbar open={info} autoHideDuration={5000} onClose={() => setInfo(null)}>
+                    <Alert severity="success" onClose={() => setInfo(null)}>
+                        {info}
+                    </Alert>
+                </Snackbar>
 
+                <Container className={classes.cardGrid} maxWidth="sm">
+                    <Paper className={classes.paper}>
+                        <Avatar className={classes.avatar}/>
+                        <Typography component="h1" variant="h5">
+                            Log In
+                        </Typography>
+                        <form className={classes.form} noValidate>
+                            <TextField
+                                variant="outlined"
+                                margin="normal"
+                                required
+                                fullWidth
+                                label="Username"
+                                name="username"
+                                value={credentials.username}
+                                onChange={handleChange}
+                                autoComplete="email"
+                                autoFocus
+                                style={{backgroundColor: '#eee'}}
+                            />
+                            <TextField
+                                variant="outlined"
+                                margin="normal"
+                                required
+                                fullWidth
+                                name="password"
+                                label="Password"
+                                type="password"
+                                value={credentials.password}
+                                onChange={handleChange}
+                                autoComplete="current-password"
+                                style={{backgroundColor: '#eee'}}
+                            />
+                            <Button
+                                fullWidth
+                                variant="contained"
+                                color="primary"
+                                className={classes.submit}
+                                onClick={login}
+                            >
+                                Log In
+                            </Button>
+
+                        </form>
+                    </Paper>
+                </Container>
             </main>
 
             {/* Footer */}
