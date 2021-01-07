@@ -36,5 +36,3 @@ Screenshots can be found here on [GitHub](https://github.com/tanujkucp/blog/tree
 ## Hosting
 The project is not currently hosted.
 
-Checkout my similar and bigger project hosted [here](https://filmistaan.web.app/) and its admin console [here](https://filmistaan-admin.web.app/).
-This project was made while I was bored in lockdown.
